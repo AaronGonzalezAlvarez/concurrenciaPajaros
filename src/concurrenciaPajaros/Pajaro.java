@@ -4,10 +4,10 @@ package concurrenciaPajaros;
 public class Pajaro extends Thread {
 
 	int i;
-	Acciones accion;
+	Acciones2 accion;
 	String tipo;
 
-	public Pajaro(int i, Acciones accion, String tipo) {
+	public Pajaro(int i, Acciones2 accion, String tipo) {
 		this.i = i;
 		this.accion = accion;
 		this.tipo = tipo;

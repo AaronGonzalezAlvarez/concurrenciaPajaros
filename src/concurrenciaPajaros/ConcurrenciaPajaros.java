@@ -5,7 +5,7 @@ package concurrenciaPajaros;
 public class ConcurrenciaPajaros {
 
 	public static void main(String[] args) {
-		Acciones b = new Acciones();
+		Acciones2 b = new Acciones2();
 		for (int i = 0; i < 10; i++) {			
 			Pajaro pajaro = (new Pajaro(i, b,"periquito"));			
 			Pajaro pajaro2 = (new Pajaro(i, b,"loro"));			
