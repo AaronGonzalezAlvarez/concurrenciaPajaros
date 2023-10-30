@@ -15,7 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * */
 
 public class Acciones4 {
-	private int canto = 0;
+	private boolean canto = false;
 	private ReentrantLock lock = new ReentrantLock();
     private Condition esperarCanto = lock.newCondition();
     private Condition adiestradorDarOrdenCanto = lock.newCondition();
@@ -30,21 +30,25 @@ public class Acciones4 {
         }
     }
     
-    public void AdiestradorPuedeCantarPajaro(int num,String tipo) throws InterruptedException {   	
-    	System.out.println("Pajaro "+ num + " que es de tipo " + tipo +" y el adiestrador dice que puedes cantar");
+    public void AdiestradorPuedeCantarPajaro() throws InterruptedException {
+    	lock.lock();
+    	try {
+    	System.out.println("Puede cantar un pajaro");
     	adiestradorDarOrdenCanto.signal();
-	    
+	    } finally {
+	        lock.unlock();
+	    }
     }
 	
 	public void cantar(int num,String tipo) throws InterruptedException {
 		
 		lock.lock();
         try {
-        	while ((canto == 1)) {
+        	while ((canto)) {
         		
         		esperarCanto.await();
         	}
-        	canto++;
+        	canto = true;
         	System.out.println("esta cantando el pajaro "+ num + " que es de tipo " + tipo);
         	
         } finally {
@@ -53,12 +57,14 @@ public class Acciones4 {
 		
 	}
 	
-	public void dejarCantar(int num,String tipo) {
+	public void dejarCantar(int num,String tipo) throws InterruptedException {
 		lock.lock();
         try {
 		System.out.println("pajaro "+ num + " deja de cantar que es de tipo " + tipo);
-		canto--;
-		esperarCanto.signal();
+		canto = false;
+		
+		//para que de la orden el adiestrador
+		AdiestradorPuedeCantarPajaro();
 		} finally {
 	        lock.unlock();
 	    }

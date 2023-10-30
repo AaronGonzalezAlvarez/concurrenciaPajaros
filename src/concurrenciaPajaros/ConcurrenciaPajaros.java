@@ -7,6 +7,8 @@ public class ConcurrenciaPajaros {
 	public static void main(String[] args) {
 		Acciones4 b = new Acciones4();
 		int z =0;
+		Adiestrador adiestrador = new Adiestrador(b);
+		adiestrador.start();
 		for (int i = 0; i < 10; i++) {			
 			Pajaro pajaro = (new Pajaro(z, b,"periquito"));	
 			pajaro.start();
