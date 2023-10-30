@@ -1,62 +1,41 @@
 package concurrenciaPajaros;
 
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Acciones2 {
-	private int cantoloro = 0;
-	private int cantoperiquito = 0;
-	private int cantogorrion = 0;
 	private ReentrantLock lock = new ReentrantLock();
     private Condition esperarCanto = lock.newCondition();
+	Semaphore cantaLoro = new Semaphore(1);
+	Semaphore cantaPeriquito = new Semaphore(1);
+	Semaphore cantaGorrion = new Semaphore(1);
 	
 	public void cantar(int num,String tipo) throws InterruptedException {
 		
-		lock.lock();
-        try {
-        	if(tipo == "loro") {
-        		while ((cantoloro == 1)) {            		
-            		esperarCanto.await();
-            	}
-        		cantoloro++;
-            	System.out.println("esta cantando el pajaro "+ num + " que es de tipo " + tipo);
-        	} else if(tipo == "periquito") {
-        		while ((cantoperiquito == 1)) {            		
-            		esperarCanto.await();
-            	}
-        		cantoperiquito++;
-            	System.out.println("esta cantando el pajaro "+ num + " que es de tipo " + tipo);
-        	} else if (tipo == "gorrion") {
-        		while ((cantogorrion == 1)) {            		
-            		esperarCanto.await();
-            	}
-        		cantogorrion++;
-            	System.out.println("esta cantando el pajaro "+ num + " que es de tipo " + tipo);
-        	}
-        	
-        } finally {
-            lock.unlock();
-        }				
-		
+        	if(tipo.equals("gorrion")) {
+        		cantaGorrion.acquire();
+        		System.out.println("esta cantando el pajaro "+ num + " que es de tipo " + tipo);
+        	}else if(tipo.equals("loro")) {
+        		cantaLoro.acquire();
+        		System.out.println("esta cantando el pajaro "+ num + " que es de tipo " + tipo);
+        	}else if(tipo.equals("periquito")) {
+        		cantaPeriquito.acquire();
+        		System.out.println("esta cantando el pajaro "+ num + " que es de tipo " + tipo);
+        	}  		
 	}
 	
 	public void dejarCantar(int num,String tipo) {
-		lock.lock();
-        try {
-        	if(tipo == "loro") {          		
-        		System.out.println("pajaro "+ num + " deja de cantar que es de tipo " + tipo);
-        		cantoloro--;
-        	} else if(tipo == "periquito") {
-        		System.out.println("pajaro "+ num + " deja de cantar que es de tipo " + tipo);
-        		cantoperiquito--;
-        	} else if (tipo == "gorrion") {
-        		System.out.println("pajaro "+ num + " deja de cantar que es de tipo " + tipo);
-        		cantogorrion--;
-        	}
-        	esperarCanto.signal();
-		} finally {
-	        lock.unlock();
-	    }
+		
+		if(tipo.equals("gorrion")) {
+    		cantaGorrion.release();
+    		System.out.println("El pajaro "+ num + " que es de tipo " + tipo +"deja de cantar");
+    	}else if(tipo.equals("loro")) {
+    		cantaLoro.release();
+    		System.out.println("El pajaro "+ num + " que es de tipo " + tipo +"deja de cantar");
+    	}else if(tipo.equals("periquito")) {
+    		cantaPeriquito.release();
+    		System.out.println("El pajaro "+ num + " que es de tipo " + tipo +"deja de cantar");
+    	}
 	}
-
 }
