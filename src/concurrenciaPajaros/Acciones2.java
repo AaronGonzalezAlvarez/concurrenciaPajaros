@@ -29,13 +29,13 @@ public class Acciones2 {
 		
 		if(tipo.equals("gorrion")) {
     		cantaGorrion.release();
-    		System.out.println("El pajaro "+ num + " que es de tipo " + tipo +"deja de cantar");
+    		System.out.println(num + " que es de tipo " + tipo +" deja de cantar");
     	}else if(tipo.equals("loro")) {
     		cantaLoro.release();
-    		System.out.println("El pajaro "+ num + " que es de tipo " + tipo +"deja de cantar");
+    		System.out.println(num + " que es de tipo " + tipo +" deja de cantar");
     	}else if(tipo.equals("periquito")) {
     		cantaPeriquito.release();
-    		System.out.println("El pajaro "+ num + " que es de tipo " + tipo +"deja de cantar");
+    		System.out.println(num + " que es de tipo " + tipo +" deja de cantar");
     	}
 	}
 }

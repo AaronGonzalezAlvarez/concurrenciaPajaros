@@ -1,5 +1,7 @@
 package concurrenciaPajaros;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -19,9 +21,15 @@ public class Acciones4 {
 	private ReentrantLock lock = new ReentrantLock();
     private Condition esperarCanto = lock.newCondition();
     private Condition adiestradorDarOrdenCanto = lock.newCondition();
+    private Map<String, Condition> raza = new HashMap();
     
     public void alaEspera(int num,String tipo) throws InterruptedException {
     	lock.lock();
+    	
+    	if(!raza.containsKey(tipo)) {
+    		raza.put(tipo,  lock.newCondition());
+    	}
+    	
         try {      		
         	System.out.println("Pajaro "+ num + " que es de tipo " + tipo +" a la espera de la orden");  
         	adiestradorDarOrdenCanto.await();        			

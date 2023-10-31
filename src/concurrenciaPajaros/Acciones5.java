@@ -1,5 +1,6 @@
 package concurrenciaPajaros;
 
+import java.util.Random;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -9,6 +10,7 @@ public class Acciones5 {
     private Condition esperarLoro = lock.newCondition();
     private Condition esperarGorrion = lock.newCondition();
     private Condition esperarPeriquito = lock.newCondition();
+    private Random random = new Random();
 	
 	public void cantar(int num,String tipo) throws InterruptedException {	
 		lock.lock();
@@ -33,32 +35,38 @@ public class Acciones5 {
 	public void dejarCantar(int num,String tipo) {
 		lock.lock();
 		cantar=false;
-		System.out.println("El pajaro "+ num + " que es de tipo " + tipo +" deja de cantar");
+		//System.out.println("El pajaro "+ num + " que es de tipo " + tipo +" deja de cantar");
 		if(tipo.equals("gorrion")) {	
-			if(hayHilosEsperandoEnCondicion(esperarLoro)) {
+			int numeroAleatorio = random.nextInt(2);
+			if(numeroAleatorio == 0 && hayHilosEsperandoEnCondicion(esperarLoro)) {
 				esperarLoro.signal();
-			}else if(hayHilosEsperandoEnCondicion(esperarPeriquito)) {
+			}else if(numeroAleatorio == 1 && hayHilosEsperandoEnCondicion(esperarPeriquito)) {
 				esperarPeriquito.signal();
 			}else if(hayHilosEsperandoEnCondicion(esperarGorrion)){
 				esperarGorrion.signal();
 			}			
     	}else if(tipo.equals("loro")) {		
-    		if(hayHilosEsperandoEnCondicion(esperarGorrion)) {
+    		int numeroAleatorio = random.nextInt(2);
+    		if(numeroAleatorio == 0 && hayHilosEsperandoEnCondicion(esperarGorrion)) {
     			esperarGorrion.signal();
-			}else if(hayHilosEsperandoEnCondicion(esperarPeriquito)) {
+			}else if(numeroAleatorio == 1 && hayHilosEsperandoEnCondicion(esperarPeriquito)) {
 				esperarPeriquito.signal();
 			}else if(hayHilosEsperandoEnCondicion(esperarLoro)){
 				esperarLoro.signal();
 			}
     	}else if(tipo.equals("periquito")) {
-    		if(hayHilosEsperandoEnCondicion(esperarLoro)) {
+    		int numeroAleatorio = random.nextInt(2);
+    		if(numeroAleatorio == 0 && hayHilosEsperandoEnCondicion(esperarLoro)) {
 				esperarLoro.signal();
-			}else if(hayHilosEsperandoEnCondicion(esperarGorrion)) {
+			}else if(numeroAleatorio == 1 && hayHilosEsperandoEnCondicion(esperarGorrion)) {
 				esperarGorrion.signal();
 			}else if(hayHilosEsperandoEnCondicion(esperarPeriquito)){
 				esperarPeriquito.signal();
 			}
     	}
+		System.out.println("esperarPeriquito: " + hayHilosEsperandoEnCondicion(esperarPeriquito));
+		System.out.println("esperarGorrion: " + hayHilosEsperandoEnCondicion(esperarGorrion));
+		System.out.println("esperarLoro: " + hayHilosEsperandoEnCondicion(esperarLoro));
 		lock.unlock();		
 	}
 	
