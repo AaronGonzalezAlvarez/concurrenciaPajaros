@@ -21,7 +21,7 @@ public class Acciones4 {
 	private ReentrantLock lock = new ReentrantLock();
     private Condition esperarCanto = lock.newCondition();
     private Condition adiestradorDarOrdenCanto = lock.newCondition();
-    private Map<String, Condition> raza = new HashMap();
+    private Map<String, Condition> raza = new HashMap<String, Condition>();
     
     public void alaEspera(int num,String tipo) throws InterruptedException {
     	lock.lock();

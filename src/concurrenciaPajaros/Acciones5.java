@@ -1,5 +1,7 @@
 package concurrenciaPajaros;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -11,22 +13,29 @@ public class Acciones5 {
     private Condition esperarGorrion = lock.newCondition();
     private Condition esperarPeriquito = lock.newCondition();
     private Random random = new Random();
+    private Map<String, Condition> raza = new HashMap<String, Condition>();
 	
 	public void cantar(int num,String tipo) throws InterruptedException {	
 		lock.lock();
-		if(tipo.equals("gorrion")) {
-			while(cantar) {
-				esperarGorrion.await();
-			}
-    	}else if(tipo.equals("loro")) {
-    		while(cantar) {
-    			esperarLoro.await();
-			}
-    	}else if(tipo.equals("periquito")) {
-    		while(cantar) {
-    			esperarPeriquito.await();
-			}
+		
+		if(!raza.containsKey(tipo)) {
+    		raza.put(tipo,  lock.newCondition());
     	}
+		
+		for (Map.Entry<String, Condition> entry : raza.entrySet()) {
+            String key = entry.getKey();
+            Condition value = entry.getValue();
+            if(key.equals(tipo)) {
+            	while(cantar) {
+    				try {
+						value.await();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+    			}
+            }
+		}
+		
 		cantar=true;
 		System.out.println("esta cantando el pajaro "+ num + " que es de tipo " + tipo);
 		lock.unlock();
@@ -36,7 +45,7 @@ public class Acciones5 {
 		lock.lock();
 		cantar=false;
 		//System.out.println("El pajaro "+ num + " que es de tipo " + tipo +" deja de cantar");
-		if(tipo.equals("gorrion")) {	
+		/*if(tipo.equals("gorrion")) {	
 			int numeroAleatorio = random.nextInt(2);
 			if(numeroAleatorio == 0 && hayHilosEsperandoEnCondicion(esperarLoro)) {
 				esperarLoro.signal();
@@ -45,28 +54,28 @@ public class Acciones5 {
 			}else if(hayHilosEsperandoEnCondicion(esperarGorrion)){
 				esperarGorrion.signal();
 			}			
-    	}else if(tipo.equals("loro")) {		
-    		int numeroAleatorio = random.nextInt(2);
-    		if(numeroAleatorio == 0 && hayHilosEsperandoEnCondicion(esperarGorrion)) {
-    			esperarGorrion.signal();
-			}else if(numeroAleatorio == 1 && hayHilosEsperandoEnCondicion(esperarPeriquito)) {
-				esperarPeriquito.signal();
-			}else if(hayHilosEsperandoEnCondicion(esperarLoro)){
-				esperarLoro.signal();
-			}
-    	}else if(tipo.equals("periquito")) {
-    		int numeroAleatorio = random.nextInt(2);
-    		if(numeroAleatorio == 0 && hayHilosEsperandoEnCondicion(esperarLoro)) {
-				esperarLoro.signal();
-			}else if(numeroAleatorio == 1 && hayHilosEsperandoEnCondicion(esperarGorrion)) {
-				esperarGorrion.signal();
-			}else if(hayHilosEsperandoEnCondicion(esperarPeriquito)){
-				esperarPeriquito.signal();
-			}
-    	}
-		System.out.println("esperarPeriquito: " + hayHilosEsperandoEnCondicion(esperarPeriquito));
-		System.out.println("esperarGorrion: " + hayHilosEsperandoEnCondicion(esperarGorrion));
-		System.out.println("esperarLoro: " + hayHilosEsperandoEnCondicion(esperarLoro));
+    	}*/
+		
+		int numRazas = raza.size();
+		Random random = new Random();
+		String proximaRaza="";
+		boolean salirDelBucle = false;
+		int currentIndex = 0;
+		int totalEntries = raza.size();
+		for (Map.Entry<String, Condition> entry : raza.entrySet()) {
+            String key = entry.getKey();
+            Condition value = entry.getValue();
+
+            if (!salirDelBucle && !key.equals(tipo) && hayHilosEsperandoEnCondicion(value)) {
+                value.signal();
+                salirDelBucle = true;
+            }           
+            currentIndex++;
+
+            if (currentIndex == totalEntries && !salirDelBucle) {
+            	raza.get(tipo).signal();
+            }
+		}
 		lock.unlock();		
 	}
 	
