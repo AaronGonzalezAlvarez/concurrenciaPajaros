@@ -44,18 +44,6 @@ public class Acciones5 {
 	public void dejarCantar(int num,String tipo) {
 		lock.lock();
 		cantar=false;
-		//System.out.println("El pajaro "+ num + " que es de tipo " + tipo +" deja de cantar");
-		/*if(tipo.equals("gorrion")) {	
-			int numeroAleatorio = random.nextInt(2);
-			if(numeroAleatorio == 0 && hayHilosEsperandoEnCondicion(esperarLoro)) {
-				esperarLoro.signal();
-			}else if(numeroAleatorio == 1 && hayHilosEsperandoEnCondicion(esperarPeriquito)) {
-				esperarPeriquito.signal();
-			}else if(hayHilosEsperandoEnCondicion(esperarGorrion)){
-				esperarGorrion.signal();
-			}			
-    	}*/
-		
 		int numRazas = raza.size();
 		Random random = new Random();
 		String proximaRaza="";
